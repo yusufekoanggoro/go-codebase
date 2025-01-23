@@ -15,7 +15,7 @@ type App struct {
 
 func NewApp() *App {
 	httpServer := fiber.New()
-	modules := modules.NewModules(&modules.ModuleParam{})
+	modules := modules.NewRegistryModule(&modules.ModuleParam{})
 
 	return &App{
 		httpServer: httpServer,

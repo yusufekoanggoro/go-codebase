@@ -5,30 +5,25 @@ import (
 	"go-codebase/pkg/shared/domain"
 )
 
-type Module interface {
-	HTTPHandler(version string) httphandler.HTTPHandler
-	Path() string
-}
-
-type moduleImpl struct {
+type module struct {
 	handlers map[string]httphandler.HTTPHandler
 }
 
-func NewUserModule() Module {
-	return &moduleImpl{
+func NewUserModule() *module {
+	return &module{
 		handlers: map[string]httphandler.HTTPHandler{
 			domain.V1: httphandler.NewHTTPHandler(),
 		},
 	}
 }
 
-func (m *moduleImpl) HTTPHandler(version string) httphandler.HTTPHandler {
+func (m *module) GetHTTPHandler(version string) httphandler.HTTPHandler {
 	if handler, exists := m.handlers[version]; exists {
 		return handler
 	}
 	return nil
 }
 
-func (m *moduleImpl) Path() string {
+func (m *module) GetPath() string {
 	return "users"
 }

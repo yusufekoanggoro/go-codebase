@@ -14,8 +14,8 @@ func (a *App) ServeHTTP() {
 	})
 
 	for _, m := range a.modules {
-		if h := m.HTTPHandler(domain.V1); h != nil {
-			v1Path := fmt.Sprintf("/%s/%s", m.Path(), domain.V1)
+		if h := m.GetHTTPHandler(domain.V1); h != nil {
+			v1Path := fmt.Sprintf("/%s/%s", m.GetPath(), domain.V1)
 			v1Group := httpServer.Group(v1Path)
 			h.RegisterRoutes(v1Group)
 		}

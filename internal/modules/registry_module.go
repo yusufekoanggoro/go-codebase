@@ -6,15 +6,17 @@ import (
 )
 
 type Module interface {
-	HTTPHandler(version string) httphandler.HTTPHandler
-	Path() string
+	GetPath() string
+	GetHTTPHandler(version string) httphandler.HTTPHandler
 }
 
 type ModuleParam struct {
 }
 
-func NewModules(param *ModuleParam) []Module {
-	return []Module{
+func NewRegistryModule(param *ModuleParam) []Module {
+	modules := []Module{
 		user.NewUserModule(),
 	}
+
+	return modules
 }
