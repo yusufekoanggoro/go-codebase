@@ -7,19 +7,19 @@ import (
 	"go-codebase/pkg/shared/domain"
 )
 
-type module struct {
+type Module struct {
 	v1 struct {
 		httpHandler *deliveryV1.HTTPHandler
 	}
 }
 
-func NewUserModule(param *base.ModuleParam) *module {
-	var module module
+func NewUserModule(param *base.ModuleParam) *Module {
+	var module Module
 	module.v1.httpHandler = deliveryV1.NewHTTPHandler()
 	return &module
 }
 
-func (m *module) GetHTTPHandler(version string) interfaces.FiberRestDelivery {
+func (m *Module) GetHTTPHandler(version string) interfaces.FiberRestDelivery {
 	switch version {
 	case domain.V1:
 		return m.v1.httpHandler
@@ -27,6 +27,6 @@ func (m *module) GetHTTPHandler(version string) interfaces.FiberRestDelivery {
 	return nil
 }
 
-func (m *module) GetPath() string {
+func (m *Module) GetPath() string {
 	return "users"
 }
