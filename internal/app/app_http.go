@@ -2,7 +2,9 @@ package app
 
 import (
 	"fmt"
+	"go-codebase/config"
 	"go-codebase/pkg/shared/domain"
+	"log"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -10,7 +12,10 @@ import (
 func (a *App) ServeHTTP() {
 	httpServer := a.httpServer.Group("/code-base")
 	httpServer.Get("", func(c *fiber.Ctx) error {
-		return c.JSON(200, "Service up and running")
+		if err := c.JSON(fiber.Map{"status": "Service up and running"}); err != nil {
+			return c.Status(fiber.StatusInternalServerError).SendString("Failed to respond")
+		}
+		return nil
 	})
 
 	for _, m := range a.modules {
@@ -21,7 +26,7 @@ func (a *App) ServeHTTP() {
 		}
 	}
 
-	if err := a.httpServer.Listen(fmt.Sprintf(":%d", 3000)); err != nil {
-		fmt.Println(err)
+	if err := a.httpServer.Listen(fmt.Sprintf(":%d", config.GlobalEnv.AppEnv)); err != nil {
+		log.Fatalf("Failed to start server: %v", err)
 	}
 }
