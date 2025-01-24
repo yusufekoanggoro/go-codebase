@@ -22,7 +22,7 @@ func main() {
 	}
 	rootApp = strings.TrimSuffix(rootApp, "/cmd/app")
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Minute)
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
 	defer cancel()
 
 	defer func() {

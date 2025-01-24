@@ -12,14 +12,14 @@ import (
 
 type App struct {
 	httpServer *fiber.App
-	modules    []factory.ModuleFactory
+	modules    []factory.Module
 }
 
 func NewApp(cfg *config.Config) *App {
 	param := &base.ModuleParam{
 		Postgres: cfg.GetPostgres(),
 	}
-	modules := factory.NewModuleFactory(param)
+	modules := factory.NewModuleFactory(param).GetModules()
 
 	httpServer := fiber.New()
 
