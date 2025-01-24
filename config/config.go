@@ -4,11 +4,12 @@ import (
 	"context"
 	"fmt"
 	"go-codebase/pkg/database/sql"
-	"log"
+	"go-codebase/pkg/logger"
 )
 
 type Config struct {
 	postgres *sql.SQLDatabase
+	logger   *logger.Logger
 	env      *Env
 }
 
@@ -32,6 +33,8 @@ func NewConfig(ctx context.Context, rootApp string) *Config {
 		}
 		cfg.postgres = sql.NewSQLDatabase(postgresConfig)
 
+		cfg.logger = logger.NewLogger()
+
 		cfgChan <- &cfg
 	}()
 
@@ -49,7 +52,11 @@ func (cfg *Config) GetPostgres() *sql.SQLDatabase {
 	return cfg.postgres
 }
 
+func (cfg Config) GetLogger() *logger.Logger {
+	return cfg.logger
+}
+
 func (cfg *Config) Exit(ctx context.Context) {
 	cfg.postgres.Close()
-	log.Println("\x1b[33;1mConfig: Success close all connection\x1b[0m")
+	cfg.logger.Info("\x1b[33;1mConfig: Success close all connection\x1b[0m", "Config.Exit()", "configexit")
 }
