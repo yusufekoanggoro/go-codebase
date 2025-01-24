@@ -1,6 +1,6 @@
 package repository
 
-import "go-codebase/internal/modules/user/repository/sql"
+import "go-codebase/internal/modules/user/v1/repository/sql"
 
 type Repository interface {
 	GetUserRepoSQL() sql.UserRepoSQL

@@ -3,19 +3,20 @@ package app
 import (
 	"context"
 	"fmt"
-	"go-codebase/internal/modules"
+	"go-codebase/internal/factory"
+	"go-codebase/internal/factory/base"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type App struct {
 	httpServer *fiber.App
-	modules    []modules.Module
+	modules    []factory.ModuleFactory
 }
 
 func NewApp() *App {
 	httpServer := fiber.New()
-	modules := modules.NewRegistryModule(&modules.ModuleParam{})
+	modules := factory.NewModuleFactory(&base.ModuleParam{})
 
 	return &App{
 		httpServer: httpServer,

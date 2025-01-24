@@ -1,25 +1,28 @@
 package user
 
 import (
-	"go-codebase/internal/modules/user/delivery/httphandler"
+	"go-codebase/internal/factory/base"
+	"go-codebase/internal/factory/interfaces"
+	deliveryV1 "go-codebase/internal/modules/user/v1/delivery/httphandler"
 	"go-codebase/pkg/shared/domain"
 )
 
 type module struct {
-	handlers map[string]httphandler.HTTPHandler
-}
-
-func NewUserModule() *module {
-	return &module{
-		handlers: map[string]httphandler.HTTPHandler{
-			domain.V1: httphandler.NewHTTPHandler(),
-		},
+	v1 struct {
+		httpHandler *deliveryV1.HTTPHandler
 	}
 }
 
-func (m *module) GetHTTPHandler(version string) httphandler.HTTPHandler {
-	if handler, exists := m.handlers[version]; exists {
-		return handler
+func NewUserModule(param *base.ModuleParam) *module {
+	var module module
+	module.v1.httpHandler = deliveryV1.NewHTTPHandler()
+	return &module
+}
+
+func (m *module) GetHTTPHandler(version string) interfaces.FiberRestDelivery {
+	switch version {
+	case domain.V1:
+		return m.v1.httpHandler
 	}
 	return nil
 }

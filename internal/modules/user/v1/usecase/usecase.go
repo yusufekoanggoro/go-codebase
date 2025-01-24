@@ -9,7 +9,7 @@ type UserUseCase interface {
 	GetUsers(ctx context.Context) error
 }
 
-// userUseCaseImpl is the implementation of UserUseCase.
+// UserUseCaseImpl is the implementation of UserUseCase.
 type userUseCaseImpl struct{}
 
 // NewUserUsecase creates a new instance of UserUseCase.
