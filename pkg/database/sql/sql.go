@@ -2,7 +2,7 @@ package sql
 
 import (
 	"fmt"
-	"log"
+	"go-codebase/pkg/logger"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -18,10 +18,11 @@ type Config struct {
 }
 
 type SQLDatabase struct {
-	db *gorm.DB
+	logger logger.Logger
+	db     *gorm.DB
 }
 
-func NewSQLDatabase(cfg *Config) *SQLDatabase {
+func NewSQLDatabase(logger logger.Logger, cfg *Config) *SQLDatabase {
 	dsn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
 		cfg.Host, cfg.Port, cfg.User, cfg.Password, cfg.DBName, cfg.SSLMode)
 
@@ -30,22 +31,25 @@ func NewSQLDatabase(cfg *Config) *SQLDatabase {
 		panic(err)
 	}
 
-	log.Println("Connected to the database successfully")
-	return &SQLDatabase{db: db}
+	logger.Info("Connected to the database successfully", "NewSQLDatabase()", "newsqldatabase")
+	return &SQLDatabase{db: db, logger: logger}
 }
 
 func (s *SQLDatabase) Close() error {
+	var event = "SQLDatabase.Close()"
+	var key = "sqldatabaseclose"
+
 	sqlDB, err := s.db.DB()
 	if err != nil {
-		log.Printf("Error getting sql.DB from gorm.DB: %v", err)
+		s.logger.Error(fmt.Sprintf("Error getting sql.DB from gorm.DB: %v", err), event, key)
 		return err
 	}
 	err = sqlDB.Close()
 	if err != nil {
-		log.Printf("Error closing the database: %v", err)
+		s.logger.Error(fmt.Sprintf("Error closing the database: %v", err), event, key)
 		return err
 	}
-	log.Println("Database connection closed successfully")
+	s.logger.Info("Database connection closed successfully", event, key)
 	return nil
 }
 
@@ -54,11 +58,14 @@ func (s *SQLDatabase) GetDatabase() *gorm.DB {
 }
 
 func (s *SQLDatabase) AutoMigrate(models ...interface{}) error {
+	var event = "SQLDatabase.AutoMigrate()"
+	var key = "sqldatabaseautomigrate"
+
 	err := s.db.AutoMigrate(models...)
 	if err != nil {
-		log.Printf("Error migrating models: %v", err)
+		s.logger.Error(fmt.Sprintf("Error migrating models: %v", err), event, key)
 		return err
 	}
-	log.Println("Auto migration completed successfully")
+	s.logger.Info("Auto migration completed successfully", event, key)
 	return nil
 }

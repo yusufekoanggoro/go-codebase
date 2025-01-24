@@ -7,5 +7,5 @@ import (
 
 type ModuleParam struct {
 	Postgres *sql.SQLDatabase
-	Logger   *logger.Logger
+	Logger   logger.Logger
 }

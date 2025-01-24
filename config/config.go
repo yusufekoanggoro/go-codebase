@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	postgres *sql.SQLDatabase
-	logger   *logger.Logger
+	logger   logger.Logger
 	env      *Env
 }
 
@@ -23,6 +23,8 @@ func NewConfig(ctx context.Context, rootApp string) *Config {
 
 		var cfg Config
 
+		cfg.logger = logger.NewLogger()
+
 		postgresConfig := &sql.Config{
 			Host:     GlobalEnv.PostgresHost,
 			Port:     GlobalEnv.PostgresPort,
@@ -31,9 +33,7 @@ func NewConfig(ctx context.Context, rootApp string) *Config {
 			DBName:   GlobalEnv.PostgresDBName,
 			SSLMode:  GlobalEnv.PostgresSSLMode,
 		}
-		cfg.postgres = sql.NewSQLDatabase(postgresConfig)
-
-		cfg.logger = logger.NewLogger()
+		cfg.postgres = sql.NewSQLDatabase(cfg.logger, postgresConfig)
 
 		cfgChan <- &cfg
 	}()
@@ -45,14 +45,13 @@ func NewConfig(ctx context.Context, rootApp string) *Config {
 	case <-ctx.Done():
 		panic(fmt.Errorf("failed to init configuration: %v", ctx.Err()))
 	}
-
 }
 
 func (cfg *Config) GetPostgres() *sql.SQLDatabase {
 	return cfg.postgres
 }
 
-func (cfg Config) GetLogger() *logger.Logger {
+func (cfg *Config) GetLogger() logger.Logger {
 	return cfg.logger
 }
 

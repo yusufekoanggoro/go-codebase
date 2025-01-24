@@ -13,7 +13,7 @@ import (
 type App struct {
 	httpServer *fiber.App
 	modules    []factory.Module
-	logger     *logger.Logger
+	logger     logger.Logger
 }
 
 func NewApp(cfg *config.Config) *App {

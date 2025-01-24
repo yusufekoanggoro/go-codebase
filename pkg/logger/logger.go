@@ -9,16 +9,26 @@ import (
 )
 
 const (
-	AppName = "service"
+	DevProfile  = "dev"
+	ProdProfile = "prod"
+	AppName     = "service"
 )
 
+type Logger interface {
+	Info(message, event, key string)
+	Warn(message, event, key string)
+	Error(message, event, key string)
+	Debug(message, event, key string)
+	Fatal(message, event, key string)
+}
+
 // Logger struct wraps around the logrus logger
-type Logger struct {
+type LoggerImpl struct {
 	*logrus.Logger
 }
 
 // NewLogger is the constructor for Logger
-func NewLogger() *Logger {
+func NewLogger() *LoggerImpl {
 	logger := logrus.New()
 
 	// Set log format to Text (default format for terminal)
@@ -35,11 +45,11 @@ func NewLogger() *Logger {
 	logger.SetOutput(os.Stdout)
 
 	// Return the Logger object
-	return &Logger{logger}
+	return &LoggerImpl{logger}
 }
 
 // GetCallerInfo gets the function name and line number where the log is called from
-func (l *Logger) GetCallerInfo() string {
+func (l *LoggerImpl) GetCallerInfo() string {
 	// Get caller information
 	pc, file, line, ok := runtime.Caller(2)
 	if !ok {
@@ -60,7 +70,7 @@ func setFields(event, key string) logrus.Fields {
 	return fields
 }
 
-func (l *Logger) Info(message, event, key string) {
+func (l *LoggerImpl) Info(message, event, key string) {
 	// Get caller information
 	callerInfo := l.GetCallerInfo()
 
@@ -78,7 +88,7 @@ func (l *Logger) Info(message, event, key string) {
 	entry.WithFields(dynamicFields).Info(message)
 }
 
-func (l *Logger) Warn(message, event, key string) {
+func (l *LoggerImpl) Warn(message, event, key string) {
 	// Get caller information
 	callerInfo := l.GetCallerInfo()
 
@@ -96,7 +106,7 @@ func (l *Logger) Warn(message, event, key string) {
 	entry.WithFields(dynamicFields).Warn(message)
 }
 
-func (l *Logger) Error(message, event, key string) {
+func (l *LoggerImpl) Error(message, event, key string) {
 	// Get caller information
 	callerInfo := l.GetCallerInfo()
 
@@ -114,7 +124,7 @@ func (l *Logger) Error(message, event, key string) {
 	entry.WithFields(dynamicFields).Error(message)
 }
 
-func (l *Logger) Debug(message, event, key string) {
+func (l *LoggerImpl) Debug(message, event, key string) {
 	// Get caller information
 	callerInfo := l.GetCallerInfo()
 
@@ -132,7 +142,7 @@ func (l *Logger) Debug(message, event, key string) {
 	entry.WithFields(dynamicFields).Debug(message)
 }
 
-func (l *Logger) Fatal(message, event, key string) {
+func (l *LoggerImpl) Fatal(message, event, key string) {
 	// Get caller information
 	callerInfo := l.GetCallerInfo()
 
