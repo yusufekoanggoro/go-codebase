@@ -6,16 +6,16 @@ type Repository interface {
 	GetUserRepoSQL() sql.UserRepoSQL
 }
 
-type repositoryImpl struct {
+type RepositoryImpl struct {
 	userRepoSQL sql.UserRepoSQL
 }
 
 func NewRepository() Repository {
-	return &repositoryImpl{
+	return &RepositoryImpl{
 		userRepoSQL: sql.NewUserRepoSQL(),
 	}
 }
 
-func (r *repositoryImpl) GetUserRepoSQL() sql.UserRepoSQL {
+func (r *RepositoryImpl) GetUserRepoSQL() sql.UserRepoSQL {
 	return r.userRepoSQL
 }

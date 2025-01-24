@@ -10,6 +10,6 @@ type ModuleFactory interface {
 	GetPath() string
 }
 
-type moduleFactoryImpl struct {
+type ModuleFactoryImpl struct {
 	param *base.ModuleParam
 }

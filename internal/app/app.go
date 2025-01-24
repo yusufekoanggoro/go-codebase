@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"go-codebase/config"
 	"go-codebase/internal/factory"
 	"go-codebase/internal/factory/base"
 
@@ -14,9 +15,13 @@ type App struct {
 	modules    []factory.ModuleFactory
 }
 
-func NewApp() *App {
+func NewApp(cfg *config.Config) *App {
+	param := &base.ModuleParam{
+		Postgres: cfg.GetPostgres(),
+	}
+	modules := factory.NewModuleFactory(param)
+
 	httpServer := fiber.New()
-	modules := factory.NewModuleFactory(&base.ModuleParam{})
 
 	return &App{
 		httpServer: httpServer,

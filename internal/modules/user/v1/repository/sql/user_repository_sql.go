@@ -8,13 +8,13 @@ type UserRepoSQL interface {
 	Create(ctx context.Context) error
 }
 
-type userRepoSQLImpl struct {
+type UserRepoSQLImpl struct {
 }
 
 func NewUserRepoSQL() UserRepoSQL {
-	return &userRepoSQLImpl{}
+	return &UserRepoSQLImpl{}
 }
 
-func (r *userRepoSQLImpl) Create(ctx context.Context) error {
+func (r *UserRepoSQLImpl) Create(ctx context.Context) error {
 	return nil
 }

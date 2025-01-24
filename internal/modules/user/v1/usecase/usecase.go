@@ -10,14 +10,14 @@ type UserUseCase interface {
 }
 
 // UserUseCaseImpl is the implementation of UserUseCase.
-type userUseCaseImpl struct{}
+type UserUseCaseImpl struct{}
 
 // NewUserUsecase creates a new instance of UserUseCase.
 func NewUserUseCase() UserUseCase {
-	return &userUseCaseImpl{}
+	return &UserUseCaseImpl{}
 }
 
 // GetUsers handles the business logic to retrieve user data.
-func (uc *userUseCaseImpl) GetUsers(ctx context.Context) error {
+func (uc *UserUseCaseImpl) GetUsers(ctx context.Context) error {
 	return nil
 }
