@@ -9,9 +9,7 @@ import (
 )
 
 const (
-	DevProfile  = "dev"
-	ProdProfile = "prod"
-	AppName     = "service"
+	AppName = "service"
 )
 
 type Logger interface {
