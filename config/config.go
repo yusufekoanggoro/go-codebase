@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"go-codebase/pkg/database/sql"
 	"go-codebase/pkg/logger"
+	"log"
+	"os"
 )
 
 type Config struct {
@@ -13,7 +15,12 @@ type Config struct {
 	env      *Env
 }
 
-func NewConfig(ctx context.Context, rootApp string) *Config {
+func NewConfig(ctx context.Context) *Config {
+	rootApp, err := os.Getwd()
+	if err != nil {
+		log.Fatalf("Error getting working directory: %v", err)
+	}
+
 	loadEnv(rootApp)
 
 	cfgChan := make(chan *Config)
@@ -57,5 +64,5 @@ func (cfg *Config) GetLogger() logger.Logger {
 
 func (cfg *Config) Exit(ctx context.Context) {
 	cfg.postgres.Close()
-	cfg.log.Fatal("\x1b[33;1mConfig: Success close all connection\x1b[0m", "Config.Exit()", "configexit")
+	cfg.log.Info("\x1b[33;1mConfig: Success close all connection\x1b[0m", "Config.Exit()", "configexit")
 }

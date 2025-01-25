@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"go-codebase/config"
 	"go-codebase/internal/app"
 	"log"
@@ -14,11 +13,6 @@ import (
 )
 
 func main() {
-	rootApp, err := os.Getwd()
-	if err != nil {
-		log.Fatalf("Error getting working directory: %v", err)
-	}
-
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
 	defer cancel()
 
@@ -28,11 +22,12 @@ func main() {
 		}
 	}()
 
-	cfg := config.NewConfig(ctx, rootApp)
+	log.Println("Starting application...")
+
+	cfg := config.NewConfig(ctx)
 	defer cfg.Exit(ctx)
 
 	app := app.NewApp(cfg)
-
 	go app.ServeHTTP() // Serve HTTP server in a goroutine
 
 	waitForShutdown(ctx, app)
@@ -42,7 +37,18 @@ func waitForShutdown(ctx context.Context, app *app.App) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	sig := <-quit
-	fmt.Printf("\nReceived signal: %v. Initiating shutdown...\n", sig)
+	log.Printf("Received signal: %v. Initiating shutdown...\n", sig)
 
-	app.Shutdown(ctx)
+	done := make(chan struct{})
+	go func() {
+		defer close(done)
+		app.Shutdown(ctx)
+	}()
+
+	select {
+	case <-done:
+		log.Println("Shutdown completed gracefully.")
+	case <-time.After(10 * time.Second):
+		log.Println("Forced shutdown due to timeout.")
+	}
 }
