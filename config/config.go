@@ -5,14 +5,16 @@ import (
 	"fmt"
 	"go-codebase/pkg/database/sql"
 	"go-codebase/pkg/logger"
+	"go-codebase/pkg/validator"
 	"log"
 	"os"
 )
 
 type Config struct {
-	postgres *sql.SQLDatabase
-	log      logger.Logger
-	env      *Env
+	postgres  *sql.SQLDatabase
+	log       logger.Logger
+	env       *Env
+	validator *validator.Validator
 }
 
 func NewConfig(ctx context.Context) *Config {
@@ -41,6 +43,8 @@ func NewConfig(ctx context.Context) *Config {
 			SSLMode:  GlobalEnv.PostgresSSLMode,
 		}
 		cfg.postgres = sql.NewSQLDatabase(cfg.log, postgresConfig)
+
+		cfg.validator = validator.NewValidator()
 
 		cfgChan <- cfg
 	}()
