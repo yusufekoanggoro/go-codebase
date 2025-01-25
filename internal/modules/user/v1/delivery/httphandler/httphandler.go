@@ -15,5 +15,7 @@ func (h *HTTPHandler) RegisterRoutes(route fiber.Router) {
 }
 
 func (h *HTTPHandler) createUser(c *fiber.Ctx) error {
-	return nil
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"Status": "Created",
+	})
 }

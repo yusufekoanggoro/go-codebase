@@ -60,6 +60,17 @@ func (l *LoggerImpl) GetCallerInfo() string {
 	return fmt.Sprintf("%s:%d in %s", file, line, funcName)
 }
 
+func mergeFields(fields1, fields2 logrus.Fields) logrus.Fields {
+	merged := make(logrus.Fields)
+	for k, v := range fields1 {
+		merged[k] = v
+	}
+	for k, v := range fields2 {
+		merged[k] = v
+	}
+	return merged
+}
+
 func setFields(event, key string) logrus.Fields {
 	// Add or update fields based on event and key
 	fields := logrus.Fields{
@@ -80,12 +91,14 @@ func (l *LoggerImpl) Info(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	entry := l.WithFields(fields)
-	entry.Info(message)
-
-	// Dynamically set fields using the setFields function and log the message
 	dynamicFields := setFields(event, key)
-	entry.WithFields(dynamicFields).Info(message)
+
+	// Combine the fields
+	allFields := mergeFields(fields, dynamicFields)
+
+	// Log the message with the combined fields
+	entry := l.WithFields(allFields)
+	entry.Info(message)
 }
 
 func (l *LoggerImpl) Warn(message, event, key string) {
@@ -98,12 +111,14 @@ func (l *LoggerImpl) Warn(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	entry := l.WithFields(fields)
-	entry.Warn(message)
-
-	// Dynamically set fields using the setFields function and log the message
 	dynamicFields := setFields(event, key)
-	entry.WithFields(dynamicFields).Warn(message)
+
+	// Combine the fields
+	allFields := mergeFields(fields, dynamicFields)
+
+	// Log the message with the combined fields
+	entry := l.WithFields(allFields)
+	entry.Warn(message)
 }
 
 func (l *LoggerImpl) Error(message, event, key string) {
@@ -116,12 +131,14 @@ func (l *LoggerImpl) Error(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	entry := l.WithFields(fields)
-	entry.Error(message)
-
-	// Dynamically set fields using the setFields function and log the message
 	dynamicFields := setFields(event, key)
-	entry.WithFields(dynamicFields).Error(message)
+
+	// Combine the fields
+	allFields := mergeFields(fields, dynamicFields)
+
+	// Log the message with the combined fields
+	entry := l.WithFields(allFields)
+	entry.Error(message)
 }
 
 func (l *LoggerImpl) Debug(message, event, key string) {
@@ -134,12 +151,14 @@ func (l *LoggerImpl) Debug(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	entry := l.WithFields(fields)
-	entry.Debug(message)
-
-	// Dynamically set fields using the setFields function and log the message
 	dynamicFields := setFields(event, key)
-	entry.WithFields(dynamicFields).Debug(message)
+
+	// Combine the fields
+	allFields := mergeFields(fields, dynamicFields)
+
+	// Log the message with the combined fields
+	entry := l.WithFields(allFields)
+	entry.Debug(message)
 }
 
 func (l *LoggerImpl) Fatal(message, event, key string) {
@@ -152,10 +171,12 @@ func (l *LoggerImpl) Fatal(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	entry := l.WithFields(fields)
-	entry.Fatal(message)
-
-	// Dynamically set fields using the setFields function and log the message
 	dynamicFields := setFields(event, key)
-	entry.WithFields(dynamicFields).Fatal(message)
+
+	// Combine the fields
+	allFields := mergeFields(fields, dynamicFields)
+
+	// Log the message with the combined fields
+	entry := l.WithFields(allFields)
+	entry.Fatal(message)
 }

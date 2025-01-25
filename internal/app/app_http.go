@@ -26,7 +26,9 @@ func (a *App) ServeHTTP() {
 		}
 	}
 
-	if err := a.httpServer.Listen(fmt.Sprintf(":%d", config.GlobalEnv.AppEnv)); err != nil {
+	address := fmt.Sprintf(":%s", config.GlobalEnv.HTTPPort)
+
+	if err := a.httpServer.Listen(address); err != nil {
 		log.Fatalf("Failed to start server: %v", err)
 	}
 }

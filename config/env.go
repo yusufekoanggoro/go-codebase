@@ -3,17 +3,19 @@ package config
 import (
 	"log"
 	"os"
+	"path/filepath"
+	"strconv"
 
 	"github.com/joho/godotenv"
 )
 
 type Env struct {
-	Port             string
+	HTTPPort         string
 	RootApp          string
 	ServiceName      string
 	AppEnv           string
 	PostgresHost     string
-	PostgresPort     string
+	PostgresPort     int
 	PostgresUser     string
 	PostgresPassword string
 	PostgresDBName   string
@@ -21,10 +23,12 @@ type Env struct {
 	PostgresTimeZone string
 }
 
-var GlobalEnv *Env
+var GlobalEnv Env
 
 func loadEnv(rootApp string) {
-	err := godotenv.Load(rootApp + "/.env")
+	envPath := filepath.Join(rootApp, ".env")
+
+	err := godotenv.Load(envPath)
 	if err != nil {
 		log.Printf("Error loading .env file: %v\n", err)
 	}
@@ -34,9 +38,9 @@ func loadEnv(rootApp string) {
 
 	var ok bool
 
-	GlobalEnv.Port, ok = os.LookupEnv("PORT")
+	GlobalEnv.HTTPPort, ok = os.LookupEnv("HTTP_PORT")
 	if !ok {
-		panic("missing PORT environment")
+		panic("missing HTTP_PORT environment")
 	}
 
 	GlobalEnv.ServiceName, ok = os.LookupEnv("SERVICE_NAME")
@@ -49,8 +53,34 @@ func loadEnv(rootApp string) {
 		panic("missing APP_ENV environment")
 	}
 
-	GlobalEnv.AppEnv, ok = os.LookupEnv("PostgresHost")
+	GlobalEnv.PostgresHost, ok = os.LookupEnv("POSTGRES_HOST")
 	if !ok {
-		panic("missing PostgresHost environment")
+		panic("missing POSTGRES_HOST environment")
+	}
+
+	if port, err := strconv.Atoi(os.Getenv("POSTGRES_PORT")); err != nil {
+		panic("missing POSTGRES_PORT environment")
+	} else {
+		GlobalEnv.PostgresPort = int(port)
+	}
+
+	GlobalEnv.PostgresUser, ok = os.LookupEnv("POSTGRES_USER")
+	if !ok {
+		panic("missing POSTGRES_USER environment")
+	}
+
+	GlobalEnv.PostgresPassword, ok = os.LookupEnv("POSTGRES_PASSWORD")
+	if !ok {
+		panic("missing POSTGRES_PASSWORD environment")
+	}
+
+	GlobalEnv.PostgresDBName, ok = os.LookupEnv("POSTGRES_DB_NAME")
+	if !ok {
+		panic("missing POSTGRES_DB_NAME environment")
+	}
+
+	GlobalEnv.PostgresSSLMode, ok = os.LookupEnv("POSTGRES_SSLMODE")
+	if !ok {
+		panic("missing POSTGRES_SSLMODE environment")
 	}
 }

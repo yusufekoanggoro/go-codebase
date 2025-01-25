@@ -9,7 +9,7 @@ import (
 
 type Config struct {
 	postgres *sql.SQLDatabase
-	logger   logger.Logger
+	log      logger.Logger
 	env      *Env
 }
 
@@ -21,9 +21,9 @@ func NewConfig(ctx context.Context, rootApp string) *Config {
 	go func() {
 		defer close(cfgChan)
 
-		var cfg Config
+		cfg := &Config{}
 
-		cfg.logger = logger.NewLogger()
+		cfg.log = logger.NewLogger()
 
 		postgresConfig := &sql.Config{
 			Host:     GlobalEnv.PostgresHost,
@@ -33,9 +33,9 @@ func NewConfig(ctx context.Context, rootApp string) *Config {
 			DBName:   GlobalEnv.PostgresDBName,
 			SSLMode:  GlobalEnv.PostgresSSLMode,
 		}
-		cfg.postgres = sql.NewSQLDatabase(cfg.logger, postgresConfig)
+		cfg.postgres = sql.NewSQLDatabase(cfg.log, postgresConfig)
 
-		cfgChan <- &cfg
+		cfgChan <- cfg
 	}()
 
 	// with timeout to init configuration
@@ -52,10 +52,10 @@ func (cfg *Config) GetPostgres() *sql.SQLDatabase {
 }
 
 func (cfg *Config) GetLogger() logger.Logger {
-	return cfg.logger
+	return cfg.log
 }
 
 func (cfg *Config) Exit(ctx context.Context) {
 	cfg.postgres.Close()
-	cfg.logger.Info("\x1b[33;1mConfig: Success close all connection\x1b[0m", "Config.Exit()", "configexit")
+	cfg.log.Fatal("\x1b[33;1mConfig: Success close all connection\x1b[0m", "Config.Exit()", "configexit")
 }

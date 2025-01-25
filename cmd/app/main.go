@@ -8,19 +8,16 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	"path/filepath"
 	"runtime/debug"
-	"strings"
 	"syscall"
 	"time"
 )
 
 func main() {
-	rootApp, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	rootApp, err := os.Getwd()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error getting working directory: %v", err)
 	}
-	rootApp = strings.TrimSuffix(rootApp, "/cmd/app")
 
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Minute)
 	defer cancel()
