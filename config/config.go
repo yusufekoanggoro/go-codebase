@@ -30,7 +30,7 @@ func NewConfig(ctx context.Context) *Config {
 
 		cfg := &Config{}
 
-		cfg.log = logger.NewLogger()
+		cfg.log = logger.NewLogger(GlobalEnv.AppName)
 
 		postgresConfig := &sql.Config{
 			Host:     GlobalEnv.PostgresHost,

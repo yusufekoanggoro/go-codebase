@@ -23,10 +23,11 @@ type Logger interface {
 // Logger struct wraps around the logrus logger
 type LoggerImpl struct {
 	*logrus.Logger
+	appName string
 }
 
 // NewLogger is the constructor for Logger
-func NewLogger() *LoggerImpl {
+func NewLogger(appName string) *LoggerImpl {
 	logger := logrus.New()
 
 	// Set log format to Text (default format for terminal)
@@ -43,7 +44,7 @@ func NewLogger() *LoggerImpl {
 	logger.SetOutput(os.Stdout)
 
 	// Return the Logger object
-	return &LoggerImpl{logger}
+	return &LoggerImpl{logger, appName}
 }
 
 // GetCallerInfo gets the function name and line number where the log is called from
@@ -69,10 +70,10 @@ func mergeFields(fields1, fields2 logrus.Fields) logrus.Fields {
 	return merged
 }
 
-func setFields(event, key string) logrus.Fields {
+func setFields(appName, event, key string) logrus.Fields {
 	// Add or update fields based on event and key
 	fields := logrus.Fields{
-		"topic": AppName,
+		"topic": appName,
 		"event": event,
 		"key":   key,
 	}
@@ -89,7 +90,7 @@ func (l *LoggerImpl) Info(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	dynamicFields := setFields(event, key)
+	dynamicFields := setFields(l.appName, event, key)
 
 	// Combine the fields
 	allFields := mergeFields(fields, dynamicFields)
@@ -109,7 +110,7 @@ func (l *LoggerImpl) Warn(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	dynamicFields := setFields(event, key)
+	dynamicFields := setFields(l.appName, event, key)
 
 	// Combine the fields
 	allFields := mergeFields(fields, dynamicFields)
@@ -129,7 +130,7 @@ func (l *LoggerImpl) Error(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	dynamicFields := setFields(event, key)
+	dynamicFields := setFields(l.appName, event, key)
 
 	// Combine the fields
 	allFields := mergeFields(fields, dynamicFields)
@@ -149,7 +150,7 @@ func (l *LoggerImpl) Debug(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	dynamicFields := setFields(event, key)
+	dynamicFields := setFields(l.appName, event, key)
 
 	// Combine the fields
 	allFields := mergeFields(fields, dynamicFields)
@@ -169,7 +170,7 @@ func (l *LoggerImpl) Fatal(message, event, key string) {
 	}
 
 	// Set additional fields based on event and key
-	dynamicFields := setFields(event, key)
+	dynamicFields := setFields(l.appName, event, key)
 
 	// Combine the fields
 	allFields := mergeFields(fields, dynamicFields)

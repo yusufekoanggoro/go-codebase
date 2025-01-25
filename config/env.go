@@ -12,7 +12,7 @@ import (
 type Env struct {
 	HTTPPort         string
 	RootApp          string
-	ServiceName      string
+	AppName          string
 	AppEnv           string
 	PostgresHost     string
 	PostgresPort     int
@@ -43,9 +43,9 @@ func loadEnv(rootApp string) {
 		panic("missing HTTP_PORT environment")
 	}
 
-	GlobalEnv.ServiceName, ok = os.LookupEnv("SERVICE_NAME")
+	GlobalEnv.AppName, ok = os.LookupEnv("APP_NAME")
 	if !ok {
-		panic("missing SERVICE_NAME environment")
+		panic("missing APP_NAME environment")
 	}
 
 	GlobalEnv.AppEnv, ok = os.LookupEnv("APP_ENV")
