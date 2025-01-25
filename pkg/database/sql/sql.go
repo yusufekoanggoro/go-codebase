@@ -28,8 +28,8 @@ func NewSQLDatabase(log logger.Logger, cfg *Config) *SQLDatabase {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		message := fmt.Sprintf("failed to connect to the database: %v", err)
-		panic(message)
+		msg := fmt.Sprintf("failed to connect to the database: %v", err)
+		panic(msg)
 	}
 
 	log.Info("Connected to the database successfully", "NewSQLDatabase()", "newsqldatabase")

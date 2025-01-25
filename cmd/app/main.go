@@ -30,25 +30,9 @@ func main() {
 	app := app.NewApp(cfg)
 	go app.ServeHTTP() // Serve HTTP server in a goroutine
 
-	waitForShutdown(ctx, app)
-}
-
-func waitForShutdown(ctx context.Context, app *app.App) {
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, os.Interrupt, syscall.SIGTERM)
 	sig := <-quit
 	log.Printf("Received signal: %v. Initiating shutdown...\n", sig)
-
-	done := make(chan struct{})
-	go func() {
-		defer close(done)
-		app.Shutdown(ctx)
-	}()
-
-	select {
-	case <-done:
-		log.Println("Shutdown completed gracefully.")
-	case <-time.After(10 * time.Second):
-		log.Println("Forced shutdown due to timeout.")
-	}
+	app.Shutdown(ctx)
 }

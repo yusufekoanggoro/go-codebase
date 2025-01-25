@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"go-codebase/config"
 	"go-codebase/internal/factory"
 	"go-codebase/internal/factory/base"
@@ -34,7 +35,9 @@ func NewApp(cfg *config.Config) *App {
 
 func (a *App) Shutdown(ctx context.Context) {
 	if err := a.httpServer.Shutdown(); err != nil {
-		panic(err)
+		msg := fmt.Sprintf("Error during shutdown: %v", err)
+		a.logger.Error(msg, "App.Shutdown()", "appshutdown")
+		return
 	}
 	a.logger.Info("Application shutdown completed", "App.Shutdown()", "appshutdown")
 }
